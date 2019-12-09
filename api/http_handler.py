@@ -12,9 +12,9 @@ class webServerHandler(BaseHTTPRequestHandler):
     #site_path - path to index.html file
     def __init__(self, request, client_address, server):
         self.site = "<html><body><h1>Error loading page</h1></body></html>"
-        super().__init__(request, client_address, server)
         with open("../site/index.html") as f:
-            self.site = f.readlines()
+            self.site = f.read()
+        super().__init__(request, client_address, server)
 
     #sets default headers
     def _headers(self):
