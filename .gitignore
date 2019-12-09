@@ -1,0 +1,6 @@
+#ignore swap files
+*.swp
+
+
+#ignore __pycache__
+api/__pycache__/*
