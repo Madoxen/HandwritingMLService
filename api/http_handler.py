@@ -3,7 +3,8 @@
 #launches on localhost:9999, you can change params if you want
 from http.server import BaseHTTPRequestHandler, HTTPServer 
 import threading
-
+import re
+import os.path
 
 #Handling strategy for this WebServer
 class webServerHandler(BaseHTTPRequestHandler):
@@ -12,6 +13,7 @@ class webServerHandler(BaseHTTPRequestHandler):
     #site_path - path to index.html file
     def __init__(self, request, client_address, server):
         self.site = "<html><body><h1>Error loading page</h1></body></html>"
+        self.root = "../site/"
         with open("../site/index.html") as f:
             self.site = f.read()
         super().__init__(request, client_address, server)
@@ -22,14 +24,35 @@ class webServerHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
 
-    #reaction to user sending GET request to a server
-    #sends index.html to a user
+    #method that will be called when user requests something from a server with a GET request
+    #sends requested file to a user 
     def do_GET(self):
-        #send site
-        self._headers()
-        self.wfile.write(bytes(self.site, 'utf-8'))
+        #prepare file path
+        true_path = self.root
+        if self.path == "/":
+            true_path += "index.html" #if site root was requested, serve index.html 
+            self._headers()
+        else:
+            true_path += self.path[1:] #because self.path begins with '/' we silce it out
 
-    #reaction to user sending POST request to a server
+        #check if file even exists and if it is valid
+        if os.path.exists(true_path) == False or os.path.isfile(true_path) == False:
+            self.send_response(404) #TODO: Investigate why 404 is sent 8 times in a row
+            return
+
+
+        #check what type of file is being requested and send appropiate meta-data
+        if re.match("\.js$", self.path):
+            self.send_response(200)
+            self.send_header("Content-type", "text/javascript")
+            self.end_headers()
+        elif re.match("\.html$", self.path):
+            self._headers()
+        #at the end write requested file to the send buffer
+        with open(true_path) as f:
+            self.wfile.write(bytes(f.read(), 'utf-8'))
+
+    #method that will be called when user wants to write some data to a server with a POST request
     #gets image data from a user and redirects it to a ML service
     #then sends JSON data about what ML service thinks that user has written
     def do_POST(self):
