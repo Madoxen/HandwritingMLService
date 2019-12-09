@@ -1,0 +1,24 @@
+1. Frontend
+- Black and white paint, without any additional features
+- Clear screen button - clears paint window
+- Send button - sends POST request to a web server with image data
+
+
+2. Backend
+- Simple HTTP web server that accepts GET and POST requests
+- On GET - sends the website to a host
+- On POST - receives image sent by a host
+
+
+3. ML service
+- Receives image 24x24 (MINST images)
+- 2 or 3 hidden layers (TBD)
+- Outputs a decision - number from 0-9 or Invalid
+
+
+4. Batch utils 
+- Model backup
+- Saved images backup
+- Start server service
+
+
