@@ -5,6 +5,9 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 import re
 import os.path
+import json
+from ml_service import MLService
+
 
 #Handling strategy for this WebServer
 class webServerHandler(BaseHTTPRequestHandler):
@@ -56,6 +59,17 @@ class webServerHandler(BaseHTTPRequestHandler):
     #gets image data from a user and redirects it to a ML service
     #then sends JSON data about what ML service thinks that user has written
     def do_POST(self):
-        self.send_response(200)
+        self.send_response(200);
+        length = int(self.headers["Content-Length"])
+        data = self.rfile.read(length)
+        json_data = json.loads(data.decode("utf-8"))
+        #pass json_data to ML service
+        ml = MLService()
+        ml.prepareImage(json_data)
+
+
+
+
+
 
 
