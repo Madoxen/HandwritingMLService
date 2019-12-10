@@ -56,8 +56,6 @@ class webServerHandler(BaseHTTPRequestHandler):
     #gets image data from a user and redirects it to a ML service
     #then sends JSON data about what ML service thinks that user has written
     def do_POST(self):
-        self._headers()
-        self.wfile.write("<html><body><b>POSTED</b></body></html>")
-
+        self.send_response(200)
 
 
