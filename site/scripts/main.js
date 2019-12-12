@@ -2,8 +2,9 @@
 window.onload = function()
 {
 	var module = new DrawingModule();
-	var clear_button = document.getElementById("clear_button")
+	var clear_button = document.getElementById("clear_button");
 	var drawing = false;
+	var result_text = document.getElementById("results_text");
 
 	function draw(env)
 	{
@@ -41,7 +42,8 @@ window.onload = function()
 		xhr.onreadystatechange = function() { // Call a function when the state changes.
     			if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
         		// Request finished.
-			console.log("POST finished")
+			console.log("POST finished");
+			result_text.innerHTML = xhr.response
 		    }
 		}
 

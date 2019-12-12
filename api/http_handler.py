@@ -65,8 +65,7 @@ class webServerHandler(BaseHTTPRequestHandler):
         json_data = json.loads(data.decode("utf-8"))
         #pass json_data to ML service
         ml = MLService()
-        ml.evaluate(json_data)
-
+        self.wfile.write(bytes(json.dumps(ml.evaluate(json_data)),'utf-8'))
 
 
 
