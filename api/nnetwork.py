@@ -1,6 +1,8 @@
 import math
 import numpy as np 
 import random
+import json
+
 class Network():
     #sizes - a tuple, each element signifies layer size (in neurons)
     def __init__(self, sizes):
@@ -9,6 +11,10 @@ class Network():
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
+
+    #creates network from given json file
+    def __init__(self, path):
+        return
 
     
     #evaluates whole network and returns output activations
@@ -92,7 +98,12 @@ class Network():
             grad_w[-l] = np.dot(activations[-l-1].transpose(), error)
         return (grad_w, grad_b)
 
-        
+    #dumps network to a file
+    def dump(self):
+        #dump format:
+        with open("network.json","w+") as f:
+            f.write(json.dumps({"biases" : [b.tolist() for b in self.biases], "weights" : [w.tolist() for w in self.weights*2 for x in range(10)]}))
+            
 
 #activation function
 def sigmoid(x):
