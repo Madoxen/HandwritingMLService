@@ -6,7 +6,7 @@ import numpy as np
 
 class MLService():
    #initialize network with 28*28 input neurons (image size)20 hidden neurons and 10 output neurons
-    net = Network((784,20,10))
+    net = Network(sizes=(784,20,10))
 
     #prepare incoming image to fit it in 28x28 pixs
     def prepareImage(self,img_data):

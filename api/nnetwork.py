@@ -5,16 +5,20 @@ import json
 
 class Network():
     #sizes - a tuple, each element signifies layer size (in neurons)
-    def __init__(self, sizes):
-        self.num_layers = len(sizes)
-        self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x)
-                        for x, y in zip(sizes[:-1], sizes[1:])]
+    def __init__(self, sizes=None, path=None):
+        if sizes:
+            self.num_layers = len(sizes)
+            self.sizes = sizes
+            self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+            self.weights = [np.random.randn(y, x)
+                            for x, y in zip(sizes[:-1], sizes[1:])]
+            return
 
-    #creates network from given json file
-    def __init__(self, path):
-        return
+        if path:
+            with open(path, "r") as f:
+                data = json.loads(f.read())
+                self.biases = np.array(data["biases"])
+                self.weights = np.array(data["weights"])
 
     
     #evaluates whole network and returns output activations
@@ -102,7 +106,7 @@ class Network():
     def dump(self):
         #dump format:
         with open("network.json","w+") as f:
-            f.write(json.dumps({"biases" : [b.tolist() for b in self.biases], "weights" : [w.tolist() for w in self.weights*2 for x in range(10)]}))
+            f.write(json.dumps({"biases" : [b.tolist() for b in self.biases], "weights" : [w.tolist() for w in self.weights]}))
             
 
 #activation function
