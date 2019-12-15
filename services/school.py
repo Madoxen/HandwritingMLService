@@ -14,6 +14,6 @@ print("School: Loading data...")
 data = data_loader.load_data("ml_data/train-images", "ml_data/train-labels")
 test_data = data_loader.load_data("ml_data/test-images", "ml_data/test-labels")
 print("Data loaded")
-n.learn(data, 3.0, 10, 1,test_data)
+n.learn(data, 3.0, 10, 10, test_data)
 n.dump()
 
