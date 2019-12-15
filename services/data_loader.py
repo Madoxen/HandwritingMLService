@@ -1,6 +1,7 @@
 import sys
 import os
 import struct
+import numpy as np
 
 #loads data sets (MINST) in form of tuples that consist of input vector and desired output vector
 def load_data(data_path, label_path):
@@ -29,6 +30,8 @@ def load_data(data_path, label_path):
                 img_data = []
                 #compose input data vector
                 for i in range(0, rows*cols):
-                        img_data.append(image_bytes[i*(k+1)])
-                result.append((img_data, label_bytes[k]))
+                        img_data.append(image_bytes[i*(k+1)] // 255.0)
+                output_vector = np.zeros((10,1))
+                output_vector[label_bytes[k]] = 1.0
+                result.append((img_data, output_vector))
     return result 

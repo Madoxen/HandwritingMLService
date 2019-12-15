@@ -6,7 +6,7 @@ import numpy as np
 
 class MLService():
    #initialize network with 28*28 input neurons (image size)20 hidden neurons and 10 output neurons
-    net = Network(sizes=(784,20,10))
+    net = Network(path="network.json")
 
     #prepare incoming image to fit it in 28x28 pixs
     def prepareImage(self,img_data):
@@ -16,7 +16,7 @@ class MLService():
         enhancer.enhance(5.0)
         enhancer.enhance(-5.0)
         image = enhancer.enhance(5.0)
-        image = ImageOps.invert(image)
+        image.show()
         return list(image.getdata())
 
 
@@ -24,6 +24,7 @@ class MLService():
         image = np.asarray(self.prepareImage(img_data))
         image = image // 255.0
         activations = self.net.feedforward(image)
+        print(activations)
         result = []
         #make average of activations incoming to the output layer
         for a in activations:
