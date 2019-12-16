@@ -7,7 +7,7 @@ import numpy as np
 def load_data(data_path, label_path):
     if not (os.path.isfile(data_path) and os.path.isfile(label_path)):
         print("Could not open one of provided files")
-        return
+     return
     
     result = []
 
@@ -30,8 +30,8 @@ def load_data(data_path, label_path):
                 img_data = []
                 #compose input data vector
                 for i in range(0, rows*cols):
-                        img_data.append(image_bytes[i*(k+1)] // 255.0)
+                        img_data.append(image_bytes[i*(k+1)] / 255.0)
                 output_vector = np.zeros((10,1))
                 output_vector[label_bytes[k]] = 1.0
-                result.append((img_data, output_vector))
+                result.append((np.array(img_data).reshape((28*28,1)), output_vector))
     return result 

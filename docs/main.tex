@@ -1,0 +1,199 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{mathtools}
+\usepackage[margin=2cm]{geometry}
+
+\title{Dokumentacja Projektu \\ Języki Skryptowe \\ Klasyfikator ręcznego pisma}
+\author{Chłąd Paweł}
+\date{2019 \\ Grudzień}
+
+\begin{document}
+\maketitle
+\pagebreak
+\section{Opis działania}
+
+\subsection{Wstęp}
+Główny program składa się z serwera HTTP, którego
+zadaniem jest obsługa użytkownika. Drugą częścią jest 
+strona internetowa która stanowi interfejs pomiędzy serwerem
+a użytkownikiem. Trzecią częścią jest program uczący, za jego
+pomocą została wytrenowana sieć neuralna, która potrafi rozpoznawać
+napisane przez użytkownika liczby. Sprawność sieci wynosi 95\% ale 
+ze względu na brak normalizacji danych wejściowych, procent ten będzie niższy
+dla prawdziwych (nieznormalizowanych) danych. 
+
+\subsection{Instrukcja Obsługi}
+
+Program uruchamiamy przez Launch.bat albo server.exe. Launch.bat przedstawi nam dodatkowe opcje:
+\begin{itemize}
+    \item Start server - uruchomi server.exe
+    \item Backup - utworzy kopię sieci neuralnej i zebranych zdjęć
+    \item Exit - wyjdzie z pliku wsadowego
+\end{itemize}
+
+
+
+
+\section{Strona techniczna}
+\subsection{Struktura}
+Serwer HTTP oraz program uczący zostały zrealizowane w języku Python (ver. 3.7.5).
+Strona internetowa w języku markupowym HTML oraz skrypty w języku JavaScript.
+
+Wszelkie pliki źródłowe znajdują się pod adresem: https://github.com/Madoxen/HandwritingMLService
+
+Lista użytych bibliotek:
+\begin{itemize}
+    \item numpy
+    \item PIL (Python Imaging Library)
+\end{itemize}
+
+
+
+Program ma następującą strukturę
+\begin{itemize}
+    \item bin - folder zawierający pliki wykonywalne
+    \item src - folder zawierający repozytorium git
+    \item data - folder zawierający dane do nauki
+    \item backup - folder zawierający kopię zapasową danych do nauki i repozytorium git
+\end{itemize}
+
+\subsection{Opis kodu}
+\subsubsection{server.py}
+Moduł python zawierający klasę Server. Klasa ta odpowiada za uruchamianie i wstrzymywanie faktycznego serwera HTTP (http.server) oraz jego handler'a (http\_handler).
+
+Klasa Server zawiera następujące właściwości:
+\begin{itemize}
+    \item addr - tuple zawierający adres i port serwera
+    \item server - instancja serwera http
+    \item server\_thread - instancja wątku serwera
+    \item restarting - flaga oznaczająca restart serwera
+\end{itemize}
+
+Klasa Server zawiera następujące metody:
+\begin{itemize}
+    \item \_\_init\_\_(addr) - konstruktor klasy Server; Addr - krotka (tuple) złożona z adresu IP oraz portu, na którym ma nasłuchiwać serwer.
+    \item run() - metoda która uruchamia wątek serwera i oczekuje wprowadzenia potencjalnej komendy od użytkownika na wątku głównym
+    \item server\_loop() - metoda która jest używana podczas konstrukcji wątku serwera 
+\end{itemize}
+
+
+\subsubsection{http\_handler.py}
+Moduł python zawierający klasę webServerHandler, której bazą jest klasa http.server.BaseHTTPRequestHandler. webServerHandler odpowiada za obsługę zapytań GET i POST.
+
+Klasa webServerHandler zawiera następujące właściwości:
+\begin{itemize}
+    \item root - ścieżka do folderu zawierającego serwowaną stronę internetową
+\end{itemize}
+
+Klasa webServerHandler zawiera następujące metody:
+\begin{itemize}
+    \item do\_GET() - metoda wywoływana podczas zapytania GET - serwuje stronę i jej skrypty znajdujące się w root
+    \item do\_POST() - metoda wywoływana podczas zapytania POST - obsługuje wymianę danych dot. wpisanego numeru. Użytkownik klikając przycisk "wyślij" wysyła dane o stworzonym przez siebie
+    obrazie, w pliku JSON. Następnie plik ten jest czytany przez serwer, który następnie dokonuje klasyfikacji przy użyciu już wytrenowanej sieci neuralnej.
+\end{itemize}
+
+
+\subsubsection{nnetwork.py}
+Moduł python zawierajacy klasę Network. Klasa ta zawiera w sobie dane o sieci neuralnej oraz algorytm uczenia.
+
+Sieć neuralna składa się z czterech warstw:
+\begin{itemize}
+    \item 784 neurony wejściowe (obraz 28x28 pix, wartości od 0 - 1 gdzie 1 to zarysowany obszar)
+    \item Dwie warstwy ukryte po 30 neuronów
+    \item 10 neuronów wyjściowych (oznaczające pewność klasyfikacji dla cyfr od 0 do 9)
+\end{itemize}
+
+
+Do nauczenia sieci został wykorzystany algorytm \textit{gradientu prostego (gradient descend)} połączony z algorytmem \textit{propagacji wstecznej (backpropagation)}.
+
+
+\textbf{Gradient prosty} 
+Metoda gradientu prostego opiera się na prostej obserwacji, nasza sieć neuralna to tak naprawdę pewna skomplikowana funkcja. Problem polega na tym, że 
+nie możemy zminimalizować sieci bezpośrednio (co by to w ogóle znaczyło?), natomiast możemy zminimalizować pewną inną powiązaną funkcję. Taką funkcję
+nazywa się funkcją kosztu (eng. cost/loss function). Funkcją kosztu może być dowolna funkcja, która będzie wskazywała na pewien "odchył" od prawidłowego stanu.
+\newline
+W przypadku programu funkcją kosztu jest funkcja kosztu kwadratowego:
+\begin{eqnarray}  
+    C(w,b) \equiv \frac{1}{2n} \sum_x \| y(x) - a\|^2.
+\end{eqnarray}
+
+Gdzie:
+\begin{itemize}
+    \item $w$ - wagi
+    \item $b$ - biasy
+    \item $y(x)$ - prawidłowe wartości na neuronach wyjściowych (wektor 10 wymiarowy)
+    \item $a$ - rzeczywiste wartości powstałe na neuronach wyjściowych (wektor 10 wymiarowy) 
+\end{itemize}
+Musimy więc znaleźć minimum funkcji kosztu, tradycyjna metoda niestety tutaj nie zadziała, gdyż funkcja ta w przypadku tego programu będzie miała tysiące zmiennych,
+dlatego też użyjemy metody przybliżonej. Wyliczając gradient takiej funkcji możemy łatwo określić \textit{kierunek} w którym musimy się poruszać, aby dotrzeć do jej minimum.
+\begin{eqnarray} 
+    \nabla C \equiv \left( \frac{\partial C}{\partial v_1}, 
+    \frac{\partial C}{\partial v_2} ... \frac{\partial C}{\partial v_n} \right)^T.
+\end{eqnarray}
+
+\pagebreak
+Pozwala nam to na określenie wektora zmian
+
+\begin{eqnarray} 
+    \Delta v = -\eta \nabla C,
+\end{eqnarray}
+
+gdzie $\eta$ to parametr uczenia (tzn. jak daleko przemieścimy się w następnym kroku). To wszystko przekłada się na generalną "zasadę" poruszania się w kierunku minimum.
+\begin{eqnarray}
+    v \rightarrow v' = v-\eta \nabla C.
+\end{eqnarray}
+
+Więc w naszym przypadku przekładamy to na odpowiednie wagi i biasy 
+\begin{eqnarray}
+    w_k & \rightarrow & w_k' = w_k-\eta \frac{\partial C}{\partial w_k} \\
+    b_l & \rightarrow & b_l' = b_l-\eta \frac{\partial C}{\partial b_l}
+\end{eqnarray}
+
+
+Klasa Network zawiera następujące właściwości:
+\begin{itemize}
+    \item num\_layers - liczba warstw neuronów
+    \item sizes - tuple zawierający liczbę neuronów w każdej warstwie
+    \item biases - lista, zawierająca tablice (numpy) biasów odpowiednich warstw (pomijając warstwę wejściową)
+    \item weights - lista, zawierająca tablice (numpy) wag odpowiednich warstw, np. dla warstwy (10) i warstwy (2) tablica ta będzie miała wymiar 10x2 gdyż do każdego neuronu
+    musimy powiązać każdy neuron z następnej warstwy
+\end{itemize}
+
+Klasa Network zawiera następujące metody:
+\begin{itemize}
+    \item \_\_init\_\_(sizes=None, path=None) - konstruktor klasy Network; dołączenie \textit{sizes} spowoduje utworzenie tablic o zadanych rozmiarach, z losowymi elementami (losowymi w rozkładzie gaussa pomiędzy 0 a 1);
+    dołączenie argumentu path spowoduje próbę odczytania sieci z zadanego pliku. (Formatem sieci jest prosty plik JSON)
+    \item feedforward(a) - oblicza wektor wyjściowy na podstawie zadanego wektora wejściowego
+    \item SGD(training\_data, epochs, mini\_batch\_size, eta, test\_data=None) - wykonuje algorytm prostego gradientu; training\_data - lista tupli, w których przechowywane są parami wektory wejściowe i poprawne wektory wyjściowe;
+    epochs - ilość powtórzeń; mini\_batch\_size - rozmiar małych paczek z danymi wejściowymi (ilość w tuplach na paczkę), ustawienie tego parametru na 1 spowoduje wykorzystanie zwykłego
+    algorytmu gradientu prostego, ustawienie parametru na wielkość większą od jeden spowoduje użycie przybliżonego algorytmu gradientu prostego; eta - szybkość uczenia; test\_data - tak samo jak training\_data, jeśli zostanie podane
+    spowoduje to, że w każdym epochu/powtórzeniu sieć zostanie przetestowana, a postęp nauki wyświetlany co powtórzenie.
+    \item backprop(x,y) - funkcja obliczająca $\frac{\partial C}{\partial w_k}$ oraz $\frac{\partial C}{\partial b_l}$ stosując algorytm propagacji wstecznej; x - wektor wejściowy; y - spodziewany wektor wyjścia.
+    \item evaluate(test\_data) - funkcja sprawdzająca liczbę poprawnych ewaluacji sieci neuralnej.
+    \item cost\_derivative(output\_activations, y) - oblicza wartość pochodnej dla funkcji kosztu.
+\end{itemize}
+
+
+\subsubsection{ml\_service.py}
+Moduł python zawierający klasę MLService. Klasa ta jest odpowiedzialna za przygotowywanie informacji wejściowych.
+
+Klasa MLService zawiera w sobie jedną właściwość statyczną:
+\begin{itemize}
+    \item net - instancja klasy Network
+\end{itemize}
+
+Klasa MLService zawiera w sobie następujące metody:
+\begin{itemize}
+    \item prepareImage(img\_data) - przygotowuje obraz w gotowy do użycia wektor 784 wymiarowy; img\_data - dane obrazu w formie JSON
+    \item evaluate(img\_data) - zwraca wektor wyjściowy; img\_data - wektor 784 wymiarowy z danymi obrazu.
+\end{itemize}
+
+
+
+
+
+
+
+\end{document}
+

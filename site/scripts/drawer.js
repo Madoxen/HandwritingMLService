@@ -14,7 +14,7 @@ class DrawingModule
 	{
 		this.context.beginPath();
   		this.context.strokeStyle = 'black';
-  		this.context.lineWidth = 3;
+  		this.context.lineWidth = 15;
   		this.context.moveTo(this.last_point.x, this.last_point.y);
   		this.context.lineTo(point.x, point.y);
   		this.context.stroke();

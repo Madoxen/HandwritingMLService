@@ -13,23 +13,21 @@ class MLService():
         image = Image.frombytes('L', (img_data['width'], img_data['height']), bytes(img_data['array']))
         image = image.resize((28,28), resample=Image.BICUBIC)
         enhancer = ImageEnhance.Contrast(image)
-        enhancer.enhance(5.0)
-        enhancer.enhance(-5.0)
         image = enhancer.enhance(5.0)
-        image.show()
+        image = enhancer.enhance(-5.0)
+        image = enhancer.enhance(5.0)
         return list(image.getdata())
 
 
     def evaluate(self, img_data):
-        image = np.asarray(self.prepareImage(img_data))
-        image = image // 255.0
+        raw_data = self.prepareImage(img_data)
+        raw_data = np.array(raw_data)
+        image = np.zeros((784,1))
+        image = raw_data.flatten('F') 
+        image = np.reshape(image,(784,1))
+        image = image / 255.0
+        print(image.shape)
         activations = self.net.feedforward(image)
-        print(activations)
-        result = []
-        #make average of activations incoming to the output layer
-        for a in activations:
-           result.append(np.average(a))
-        print(result)
-        return result; 
+        return [int(np.argmax(activations)), float(activations[np.argmax(activations)])]
 
 
