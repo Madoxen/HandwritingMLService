@@ -3,10 +3,43 @@
 \usepackage{polski}
 \usepackage{mathtools}
 \usepackage[margin=2cm]{geometry}
+\usepackage{listings}
+\usepackage{color}
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
 
 \title{Dokumentacja Projektu \\ Języki Skryptowe \\ Klasyfikator ręcznego pisma}
 \author{Chłąd Paweł}
 \date{2019 \\ Grudzień}
+
+
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+
+\lstset{frame=tb,
+  breaklines=true,
+  showstringspaces=false,
+  columns=flexible,
+  numbers=none,
+  tabsize=4
+}
+
 
 \begin{document}
 \maketitle
@@ -64,17 +97,17 @@ Moduł python zawierający klasę Server. Klasa ta odpowiada za uruchamianie i w
 
 Klasa Server zawiera następujące właściwości:
 \begin{itemize}
-    \item addr - tuple zawierający adres i port serwera
-    \item server - instancja serwera http
-    \item server\_thread - instancja wątku serwera
-    \item restarting - flaga oznaczająca restart serwera
+    \item \textbf{addr} - tuple zawierający adres i port serwera
+    \item \textbf{server} - instancja serwera http
+    \item \textbf{server\_thread} - instancja wątku serwera
+    \item \textbf{restarting} - flaga oznaczająca restart serwera
 \end{itemize}
 
 Klasa Server zawiera następujące metody:
 \begin{itemize}
-    \item \_\_init\_\_(addr) - konstruktor klasy Server; Addr - krotka (tuple) złożona z adresu IP oraz portu, na którym ma nasłuchiwać serwer.
-    \item run() - metoda która uruchamia wątek serwera i oczekuje wprowadzenia potencjalnej komendy od użytkownika na wątku głównym
-    \item server\_loop() - metoda która jest używana podczas konstrukcji wątku serwera 
+    \item \textbf{\_\_init\_\_(addr)} - konstruktor klasy Server; Addr - krotka (tuple) złożona z adresu IP oraz portu, na którym ma nasłuchiwać serwer.
+    \item \textbf{run()} - metoda która uruchamia wątek serwera i oczekuje wprowadzenia potencjalnej komendy od użytkownika na wątku głównym
+    \item \textbf{server\_loop()} - metoda która jest używana podczas konstrukcji wątku serwera 
 \end{itemize}
 
 
@@ -83,13 +116,13 @@ Moduł python zawierający klasę webServerHandler, której bazą jest klasa htt
 
 Klasa webServerHandler zawiera następujące właściwości:
 \begin{itemize}
-    \item root - ścieżka do folderu zawierającego serwowaną stronę internetową
+    \item \textbf{root} - ścieżka do folderu zawierającego serwowaną stronę internetową
 \end{itemize}
 
 Klasa webServerHandler zawiera następujące metody:
 \begin{itemize}
-    \item do\_GET() - metoda wywoływana podczas zapytania GET - serwuje stronę i jej skrypty znajdujące się w root
-    \item do\_POST() - metoda wywoływana podczas zapytania POST - obsługuje wymianę danych dot. wpisanego numeru. Użytkownik klikając przycisk "wyślij" wysyła dane o stworzonym przez siebie
+    \item \textbf{do\_GET()} - metoda wywoływana podczas zapytania GET - serwuje stronę i jej skrypty znajdujące się w root
+    \item \textbf{do\_POST()} - metoda wywoływana podczas zapytania POST - obsługuje wymianę danych dot. wpisanego numeru. Użytkownik klikając przycisk "wyślij" wysyła dane o stworzonym przez siebie
     obrazie, w pliku JSON. Następnie plik ten jest czytany przez serwer, który następnie dokonuje klasyfikacji przy użyciu już wytrenowanej sieci neuralnej.
 \end{itemize}
 
@@ -153,25 +186,25 @@ Więc w naszym przypadku przekładamy to na odpowiednie wagi i biasy
 
 Klasa Network zawiera następujące właściwości:
 \begin{itemize}
-    \item num\_layers - liczba warstw neuronów
-    \item sizes - tuple zawierający liczbę neuronów w każdej warstwie
-    \item biases - lista, zawierająca tablice (numpy) biasów odpowiednich warstw (pomijając warstwę wejściową)
-    \item weights - lista, zawierająca tablice (numpy) wag odpowiednich warstw, np. dla warstwy (10) i warstwy (2) tablica ta będzie miała wymiar 10x2 gdyż do każdego neuronu
+    \item \textbf{num\_layers} - liczba warstw neuronów
+    \item \textbf{sizes} - tuple zawierający liczbę neuronów w każdej warstwie
+    \item \textbf{biases} - lista, zawierająca tablice (numpy) biasów odpowiednich warstw (pomijając warstwę wejściową)
+    \item \textbf{weights} - lista, zawierająca tablice (numpy) wag odpowiednich warstw, np. dla warstwy (10) i warstwy (2) tablica ta będzie miała wymiar 10x2 gdyż do każdego neuronu
     musimy powiązać każdy neuron z następnej warstwy
 \end{itemize}
 
 Klasa Network zawiera następujące metody:
 \begin{itemize}
-    \item \_\_init\_\_(sizes=None, path=None) - konstruktor klasy Network; dołączenie \textit{sizes} spowoduje utworzenie tablic o zadanych rozmiarach, z losowymi elementami (losowymi w rozkładzie gaussa pomiędzy 0 a 1);
+    \item \textbf{\_\_init\_\_(sizes=None, path=None)} - konstruktor klasy Network; dołączenie \textit{sizes} spowoduje utworzenie tablic o zadanych rozmiarach, z losowymi elementami (losowymi w rozkładzie gaussa pomiędzy 0 a 1);
     dołączenie argumentu path spowoduje próbę odczytania sieci z zadanego pliku. (Formatem sieci jest prosty plik JSON)
-    \item feedforward(a) - oblicza wektor wyjściowy na podstawie zadanego wektora wejściowego
-    \item SGD(training\_data, epochs, mini\_batch\_size, eta, test\_data=None) - wykonuje algorytm prostego gradientu; training\_data - lista tupli, w których przechowywane są parami wektory wejściowe i poprawne wektory wyjściowe;
+    \item \textbf{feedforward(a)} - oblicza wektor wyjściowy na podstawie zadanego wektora wejściowego
+    \item \textbf{SGD(training\_data, epochs, mini\_batch\_size, eta, test\_data=None)} - wykonuje algorytm prostego gradientu; training\_data - lista tupli, w których przechowywane są parami wektory wejściowe i poprawne wektory wyjściowe;
     epochs - ilość powtórzeń; mini\_batch\_size - rozmiar małych paczek z danymi wejściowymi (ilość w tuplach na paczkę), ustawienie tego parametru na 1 spowoduje wykorzystanie zwykłego
     algorytmu gradientu prostego, ustawienie parametru na wielkość większą od jeden spowoduje użycie przybliżonego algorytmu gradientu prostego; eta - szybkość uczenia; test\_data - tak samo jak training\_data, jeśli zostanie podane
     spowoduje to, że w każdym epochu/powtórzeniu sieć zostanie przetestowana, a postęp nauki wyświetlany co powtórzenie.
-    \item backprop(x,y) - funkcja obliczająca $\frac{\partial C}{\partial w_k}$ oraz $\frac{\partial C}{\partial b_l}$ stosując algorytm propagacji wstecznej; x - wektor wejściowy; y - spodziewany wektor wyjścia.
-    \item evaluate(test\_data) - funkcja sprawdzająca liczbę poprawnych ewaluacji sieci neuralnej.
-    \item cost\_derivative(output\_activations, y) - oblicza wartość pochodnej dla funkcji kosztu.
+    \item \textbf{backprop(x,y)} - funkcja obliczająca $\frac{\partial C}{\partial w_k}$ oraz $\frac{\partial C}{\partial b_l}$ stosując algorytm propagacji wstecznej; x - wektor wejściowy; y - spodziewany wektor wyjścia.
+    \item \textbf{evaluate(test\_data)} - funkcja sprawdzająca liczbę poprawnych ewaluacji sieci neuralnej.
+    \item \textbf{cost\_derivative(output\_activations, y)} - oblicza wartość pochodnej dla funkcji kosztu.
 \end{itemize}
 
 
@@ -180,18 +213,33 @@ Moduł python zawierający klasę MLService. Klasa ta jest odpowiedzialna za prz
 
 Klasa MLService zawiera w sobie jedną właściwość statyczną:
 \begin{itemize}
-    \item net - instancja klasy Network
+    \item \textbf{net} - instancja klasy Network
 \end{itemize}
 
 Klasa MLService zawiera w sobie następujące metody:
 \begin{itemize}
-    \item prepareImage(img\_data) - przygotowuje obraz w gotowy do użycia wektor 784 wymiarowy; img\_data - dane obrazu w formie JSON
-    \item evaluate(img\_data) - zwraca wektor wyjściowy; img\_data - wektor 784 wymiarowy z danymi obrazu.
+    \item \textbf{prepareImage(img\_data)} - przygotowuje obraz w gotowy do użycia wektor 784 wymiarowy; img\_data - dane obrazu w formie JSON
+    \item \textbf{evaluate(img\_data)} - zwraca wektor wyjściowy; img\_data - wektor 784 wymiarowy z danymi obrazu.
 \end{itemize}
 
 
-
-
+\pagebreak
+\lstinputlisting[language=Python]{../api/server.py}
+\pagebreak
+\lstinputlisting[language=Python]{../api/ml_service.py}
+\pagebreak
+\lstinputlisting[language=Python]{../api/nnetwork.py}
+\pagebreak
+\lstinputlisting[language=Python]{../api/http_handler.py}
+\pagebreak
+\lstinputlisting[language=HTML]{../site/index.html}
+\pagebreak
+\lstinputlisting[language=JavaScript]{../site/scripts/drawer.js}
+\pagebreak
+\lstinputlisting[language=JavaScript]{../site/scripts/main.js}
+\pagebreak
+\lstinputlisting[language=JavaScript]{../site/scripts/point.js}
+\pagebreak
 
 
 
