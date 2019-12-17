@@ -32,7 +32,7 @@ GOTO MENU
 :TWO
 XCOPY server.exe ..\backup
 XCOPY network.json ..\backup
-XCOPY ..\src ..\backup
+XCOPY /E ..\src ..\backup
 GOTO MENU
 
 
