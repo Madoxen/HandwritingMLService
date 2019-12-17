@@ -7,9 +7,12 @@ ECHO 1. Starts the server
 ECHO 2. Backups model
 ECHO 3. Exits the program
 
-SET /P choice="Choice>>"
+
 
 :MENU
+SET /P choice="Choice>>"
+
+
 
 IF %choice% EQU 1 (
 GOTO ONE
@@ -27,9 +30,9 @@ GOTO MENU
 
 
 :TWO
-XCOPY server.exe ../backup
-XCOPY network.json ../backup
-XCOPY ../src ../backup
+XCOPY server.exe ..\backup
+XCOPY network.json ..\backup
+XCOPY ..\src ..\backup
 GOTO MENU
 
 
